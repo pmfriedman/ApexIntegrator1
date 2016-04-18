@@ -1,0 +1,68 @@
+﻿@model string
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+
+<h2 id="txtResult">hello</h2>
+<form action="#" method="post">
+    <input type="text" name="text" id="txtGeocode" value="" />
+    <!--<input type="submit" id="doGeocode" value="submit" />-->
+</form>
+
+@if (Model != null)
+{
+    <h2>
+        @Model
+    </h2>
+}
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/rx.all.js"></script>
+
+<script>
+    var keyup = Rx.Observable.fromEvent(document.querySelector('#txtGeocode'), 'keyup')
+        .pluck('target', 'value')
+        .filter(text => text.length > 2)
+        .debounce(750)
+        .distinctUntilChanged();
+    var searcher = keyup
+            .flatMapLatest(function (text) {
+                var geocodePromise = $.ajax({
+                    type: "Post",
+                    url: "/Geocode/DoGeocode",
+                    data: { text: text }
+                }).promise();
+                return geocodePromise;
+            });
+
+    searcher.subscribe(
+      function (data) {
+          $("#txtResult").text(data);
+      },
+      function (error) {
+          console.log(error);
+      });
+
+
+
+    //$('#txtGeocode').on('input', function () {
+    //    $.ajax({
+    //        type: "Post",
+    //        url: "/Geocode/DoGeocode",
+    //        data: { text: $("#txtGeocode").val() }
+    //    }).promise();
+    //    .done(function (data) {
+    //        console.log(data);
+    //    })
+    //    .fail(function (message) {
+    //        console.log(message);
+    //    })
+    //    .always(function () {
+    //        console.log('always');
+    //    });
+    //    return false;
+    //});
+</script>

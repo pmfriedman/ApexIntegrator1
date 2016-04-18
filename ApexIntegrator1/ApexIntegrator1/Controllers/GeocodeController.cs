@@ -21,10 +21,21 @@ namespace ApexIntegrator1.Controllers
         [HttpPost]
         public async Task<ActionResult> DoGeocode(string text)
         {
-            var service = new GeocodeService();
-            var geocode = await service.GeocodeAsync(text);
+            try
+            {
+                var service = new GeocodeService();
+                var geocode = await service.GeocodeAsync(text);
 
-            return Json(geocode?.ResultsData?[0]?.Description);
+                var result = geocode?.ResultsData?[0]?.Description;
+                if (result == null)
+                    result = string.Empty;
+
+                return Json(result);
+            }
+            catch
+            {
+                return Json(string.Empty);
+            }
         }
     }
 }
