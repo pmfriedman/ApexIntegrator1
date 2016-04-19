@@ -11,7 +11,7 @@ namespace ApexServices
     {
         public async Task<MapLocalSearchResult> GeocodeAsync(string text)
         {
-            var connection = await Connection.GetConnection();
+            var connection = await Connection.GetConnectionAsync();
             var result = await connection.Mapping.PerformSearchAsync(
                 connection.Session,
                 connection.RegionContext,

@@ -53,7 +53,7 @@ namespace ApexServices
             private set;
         }
 
-        public static async Task<Connection> GetConnection()
+        public static async Task<Connection> GetConnectionAsync()
         {
             if (_sharedConnection == null)
             {

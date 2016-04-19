@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="GeocodeTest.cs" />
     <Compile Include="ConnectionTest.cs" />
+    <Compile Include="LocationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

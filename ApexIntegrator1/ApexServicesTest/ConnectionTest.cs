@@ -14,7 +14,7 @@ namespace ApexServicesTest
         [Test]
         public async Task Connect()
         {
-            var connection = await Connection.GetConnection();
+            var connection = await Connection.GetConnectionAsync();
             Assert.That(connection, Is.Not.Null);
         }
     }
