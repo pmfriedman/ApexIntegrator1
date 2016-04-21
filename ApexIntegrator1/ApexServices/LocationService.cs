@@ -17,11 +17,12 @@ namespace ApexServices
             var location = new ServiceLocation()
             {
                 Action = ActionType.Add,
-                Identifier = "FIDO",
+                Identifier = DateTime.Now.Ticks.ToString(),
                 StandingDeliveryQuantities = new Quantities(),
                 StandingPickupQuantities = new Quantities(),
                 TimeWindowTypeEntityKey = defaults.TimeWindowTypeEntityKey,
-                ServiceTimeTypeEntityKey = defaults.ServiceTimeTypeEntityKey
+                ServiceTimeTypeEntityKey = defaults.ServiceTimeTypeEntityKey,
+                Address = new Address()
             };
 
             var result = await connection.Routing.SaveAsync(

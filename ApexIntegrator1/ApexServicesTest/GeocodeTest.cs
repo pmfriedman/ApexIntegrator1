@@ -16,7 +16,7 @@ namespace ApexServicesTest
         {
             var service = new GeocodeService();
 
-            var result = await service.GeocodeAsync("2807 Laurelwood Ct, Baltimore, MD 21209");
+            var result = await service.GeocodeAsync("2807 LAURELWOOD CT, BALTIMORE, BALTIMORE CITY, MD, USA 21209");
 
             Assert.That(
                 result.ResultsData.Single().Description, 

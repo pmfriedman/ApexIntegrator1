@@ -17,11 +17,17 @@ namespace ApexServices
                 connection.RegionContext,
                 new MapLocalSearchCriteria
                 {
-                    PlaceToSearch = text
+                    PlaceToSearch = text,
+                    PointToBeginSearch = new Coordinate
+                    {
+                        Latitude = 39376637,
+                        Longitude = -76692316
+                    }
                 },
                 new MapLocalSearchOptions
                 {
-                    PropertyInclusionMode = PropertyInclusionMode.All
+                    PropertyInclusionMode = PropertyInclusionMode.AllWithoutChildren,
+                    
                 });
 
             return result.PerformSearchResult;

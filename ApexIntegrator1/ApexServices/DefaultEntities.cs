@@ -94,8 +94,8 @@ namespace ApexServices
 
                 if (queryResult.RetrieveResult.Items.Length > 0)
                 {
-                    _sharedDefaults.ServiceTimeTypeEntityKey =
-                        queryResult.RetrieveResult.Items.OfType<ServiceTimeType>().First().EntityKey;
+                    _sharedDefaults.TimeWindowTypeEntityKey =
+                        queryResult.RetrieveResult.Items.OfType<TimeWindowType>().First().EntityKey;
                 }
                 else
                 {
