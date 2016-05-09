@@ -9,11 +9,11 @@ namespace ApexServices
 {
     public class SessionService
     {
-        public async Task<bool> DeleteCurrentSession()
+        public async System.Threading.Tasks.Task DeleteCurrentSession()
         {
-            long? currrentSessionKey = await GetCurrentSessionIfExistsAsync();
+            RoutingSession currrentSession = await GetCurrentSessionIfExistsAsync();
 
-            if (currrentSessionKey.HasValue)
+            if (currrentSession != null)
             {
                 var connection = await Connection.GetConnectionAsync();
                 var result = await connection.Routing.SaveAsync(
@@ -24,7 +24,8 @@ namespace ApexServices
                     new DailyRoutingSession
                     {
                         Action = ActionType.Delete,
-                        EntityKey = currrentSessionKey.Value,
+                        EntityKey = currrentSession.EntityKey,
+                        Version = currrentSession.Version,
                         StartDate = DateTime.Today.ToApexDate(),
                         Description = SESSION_DESCRIPTION
                     }
@@ -34,7 +35,6 @@ namespace ApexServices
                         InclusionMode = PropertyInclusionMode.All
                     });
             }
-            return true;
         }
 
         public async Task<RoutingSession> GetCurrentSessionIfExistsAsync()
@@ -56,22 +56,22 @@ namespace ApexServices
                     PropertyInclusionMode = PropertyInclusionMode.AllWithoutChildren
                 });
 
-            long? sessionKey = null;
+            RoutingSession session = null;
             if (response.RetrieveResult.Items.Length != 0)
-                sessionKey = response.RetrieveResult.Items[0].EntityKey;
+                session = response.RetrieveResult.Items[0] as DailyRoutingSession;
 
-            return sessionKey;
+            return session;
         }
 
-        public async Task<long> GetOrCreateSessionAsync()
+        public async Task<RoutingSession> GetOrCreateSessionAsync()
         {
             var connection = await Connection.GetConnectionAsync();
 
-            var sessionKey = await GetCurrentSessionIfExistsAsync();
+            var session = await GetCurrentSessionIfExistsAsync();
 
-            if (sessionKey != null)
+            if (session == null)
             {
-                var session = new DailyRoutingSession
+                session = new DailyRoutingSession
                 {
                     Action = ActionType.Add,
                     Description = SESSION_DESCRIPTION,
@@ -87,13 +87,15 @@ namespace ApexServices
                     new[] { session },
                     new SaveOptions
                     {
-                        InclusionMode = PropertyInclusionMode.All
+                        InclusionMode = PropertyInclusionMode.All,
+                        ReturnInclusionMode = PropertyInclusionMode.All,
+                        ReturnSavedItems = true
                     });
 
-                sessionKey = saveResponse.SaveResult[0].EntityKey;
+                session = saveResponse.SaveResult[0].Object as DailyRoutingSession;
             }
 
-            return sessionKey.Value;
+            return session;
         }
 
         private static string SESSION_DESCRIPTION = "This and That";

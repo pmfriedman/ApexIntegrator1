@@ -15,9 +15,10 @@ namespace ApexServicesTest
         public async Task GetOrCreateSession()
         {
             var svc = new SessionService();
-            var sessionKey = await svc.GetOrCreateSessionAsync();
+            await svc.DeleteCurrentSession();
+            var session = await svc.GetOrCreateSessionAsync();
 
-            Assert.That(sessionKey, Is.Not.EqualTo(0));
+            Assert.That(session, Is.Not.Null);
         }
 
         [Test]
@@ -25,6 +26,9 @@ namespace ApexServicesTest
         {
             var svc = new SessionService();
             await svc.DeleteCurrentSession();
+
+            var session = await svc.GetCurrentSessionIfExistsAsync();
+            Assert.That(session, Is.Null);
         }
     }
 }
