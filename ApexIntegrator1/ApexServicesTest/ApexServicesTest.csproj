@@ -49,6 +49,7 @@
     <Compile Include="ConnectionTest.cs" />
     <Compile Include="DefaultEntitiesTests.cs" />
     <Compile Include="LocationTests.cs" />
+    <Compile Include="OrderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionTests.cs" />
   </ItemGroup>

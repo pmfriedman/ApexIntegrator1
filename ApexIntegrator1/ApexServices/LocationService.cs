@@ -9,10 +9,18 @@ namespace ApexServices
 {
     public class LocationService
     {
-        public async Task<long> CreateNewLocation()
+        public async Task<ServiceLocation> CreateNewLocation(string addressText = null)
         {
             var connection = await Connection.GetConnectionAsync();
             var defaults = await DefaultEntities.GetDefaultsAsync();
+
+            var coordinate = new Coordinate();
+
+            if (addressText != null)
+            {
+                var geocode = (await new GeocodeService().GeocodeAsync(addressText)).ResultsData[0];
+                coordinate = geocode.Location;
+            }
 
             var location = new ServiceLocation()
             {
@@ -29,7 +37,13 @@ namespace ApexServices
                         CountryISO3Abbr = "USA"
                     }
                 },
+                Coordinate = coordinate,
                 WorldTimeZone_TimeZone = WorldTimeZone.EasternTimeUSCanada.ToString()
+            };
+
+            var returnPropertyOptions = new ServiceLocationPropertyOptions
+            {
+                Identifier = true
             };
 
             var result = await connection.Routing.SaveAsync(
@@ -39,13 +53,14 @@ namespace ApexServices
                 new SaveOptions
                 {
                     InclusionMode = PropertyInclusionMode.All,
-                    ReturnInclusionMode = PropertyInclusionMode.None,
-                    ReturnSavedItems = false
+                    ReturnInclusionMode = PropertyInclusionMode.AccordingToPropertyOptions,
+                    ReturnSavedItems = true,
+                    ReturnPropertyOptions = returnPropertyOptions
                 });
 
-            var key = result.SaveResult[0].EntityKey;
+            var retVal = result.SaveResult[0].Object as ServiceLocation;
 
-            return key;
+            return retVal;
         }
 
         public async Task<long> UpdateLocationAddress(long locationEntityKey, long version, string addressText)

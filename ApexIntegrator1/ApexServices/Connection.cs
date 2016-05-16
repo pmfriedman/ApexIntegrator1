@@ -16,6 +16,7 @@ namespace ApexServices
         }
 
         private static Connection _sharedConnection;
+        private static object _connectionLock = new object();
 
         internal LoginServiceClient Login
         {
@@ -53,69 +54,113 @@ namespace ApexServices
             private set;
         }
 
+        internal long UserEntityKey
+        {
+            get;
+            private set;
+        }
+
+        internal long OrderClassEntityKey
+        {
+            get;
+            private set;
+        }
+             
+
         public static async Task<Connection> GetConnectionAsync()
         {
-            if (_sharedConnection == null)
+            lock(_connectionLock)
             {
-                _sharedConnection = new Connection();
-
-                _sharedConnection.Login = new LoginServiceClient(
-                    new BasicHttpsBinding()
-                    {
-                        MaxReceivedMessageSize = 2147483647
-                    },
-                    new EndpointAddress("https://apex-cs-login.aws.roadnet.com/Login/LoginService.svc")
-                );
-
-                var loginResult = await _sharedConnection.Login.LoginAsync(
-                    "pfriedman@roadnet.com",
-                    "Roadnet3",
-                    new CultureOptions(),
-                    new ClientApplicationInfo
-                    {
-                        ClientApplicationIdentifier = new Guid("94e962d3-370a-439d-adc3-d461d48bb05f")
-                    });
-
-                _sharedConnection.Session = new SessionHeader { SessionGuid = loginResult.UserSession.Guid };
-
-                _sharedConnection.Query = new QueryServiceClient(
-                    new BasicHttpsBinding()
-                    {
-                        MaxReceivedMessageSize = 2147483647
-                    },
-                    new EndpointAddress(loginResult.QueryServiceUrl));
-
-                var retrievalResults = await _sharedConnection.Query.RetrieveRegionsGrantingPermissionsAsync(
-                    _sharedConnection.Session,
-                    new RolePermission[] { },
-                    false);
-
-                var region = retrievalResults.RetrieveRegionsGrantingPermissionsResult.Items.OfType<Region>().First();
-                _sharedConnection.RegionContext = new SingleRegionContext
+                if (_sharedConnection == null)
                 {
-                    BusinessUnitEntityKey = region.BusinessUnitEntityKey,
-                    RegionEntityKey = region.EntityKey
-                };
+                    _sharedConnection = new Connection();
 
-                var urls = await _sharedConnection.Query.RetrieveUrlsForContextAsync(
-                    _sharedConnection.Session,
-                    _sharedConnection.RegionContext);
+                    _sharedConnection.Login = new LoginServiceClient(
+                        new BasicHttpsBinding()
+                        {
+                            MaxReceivedMessageSize = 2147483647
+                        },
+                        new EndpointAddress("https://apex-cs-login.aws.roadnet.com/Login/LoginService.svc")
+                    );
 
-                _sharedConnection.Mapping = new MappingServiceClient(
-                    new BasicHttpsBinding()
+                    var loginResult = _sharedConnection.Login.Login(
+                        "pfriedman@roadnet.com",
+                        "Roadnet3",
+                        new CultureOptions(),
+                        new ClientApplicationInfo
+                        {
+                            ClientApplicationIdentifier = new Guid("94e962d3-370a-439d-adc3-d461d48bb05f")
+                        });
+
+                    _sharedConnection.Session = new SessionHeader { SessionGuid = loginResult.UserSession.Guid };
+
+                    _sharedConnection.Query = new QueryServiceClient(
+                        new BasicHttpsBinding()
+                        {
+                            MaxReceivedMessageSize = 2147483647
+                        },
+                        new EndpointAddress(loginResult.QueryServiceUrl));
+
+                    var retrievalResults = _sharedConnection.Query.RetrieveRegionsGrantingPermissions(
+                        _sharedConnection.Session,
+                        new RolePermission[] { },
+                        false);
+
+                    var region = retrievalResults.Items.OfType<Region>().First();
+                    _sharedConnection.RegionContext = new SingleRegionContext
                     {
-                        MaxReceivedMessageSize = 2147483647
-                    },
-                    new EndpointAddress(urls.RetrieveUrlsForContextResult.MappingService));
+                        BusinessUnitEntityKey = region.BusinessUnitEntityKey,
+                        RegionEntityKey = region.EntityKey
+                    };
 
-                _sharedConnection.Routing = new RoutingServiceClient(
-                    new BasicHttpsBinding()
-                    {
-                        MaxReceivedMessageSize = 2147483647
-                    },
-                    new EndpointAddress(urls.RetrieveUrlsForContextResult.RoutingService));
+                    var urls = _sharedConnection.Query.RetrieveUrlsForContext(
+                        _sharedConnection.Session,
+                        _sharedConnection.RegionContext);
+
+                    _sharedConnection.Mapping = new MappingServiceClient(
+                        new BasicHttpsBinding()
+                        {
+                            MaxReceivedMessageSize = 2147483647
+                        },
+                        new EndpointAddress(urls.MappingService));
+
+                    _sharedConnection.Routing = new RoutingServiceClient(
+                        new BasicHttpsBinding()
+                        {
+                            MaxReceivedMessageSize = 2147483647
+                        },
+                        new EndpointAddress(urls.RoutingService));
+                    
+
+                    var userResults = _sharedConnection.Query.Retrieve(
+                        _sharedConnection.Session,
+                        _sharedConnection.RegionContext,
+                        new RetrievalOptions
+                        {
+                            Expression = new EqualToExpression
+                            {
+                                Left = new PropertyExpression { Name = "EmailAddress" },
+                                Right = new ValueExpression { Value = "pfriedman@roadnet.com" }
+                            },
+                            PropertyInclusionMode = PropertyInclusionMode.None,
+                            Type = typeof(User).Name
+                        });
+                    _sharedConnection.UserEntityKey = userResults.Items.Single().EntityKey;
+
+
+                    var orderClassResults = _sharedConnection.Query.Retrieve(
+                        _sharedConnection.Session,
+                        _sharedConnection.RegionContext,
+                        new RetrievalOptions
+                        {
+                            PropertyInclusionMode = PropertyInclusionMode.None,
+                            Type = typeof(OrderClass).Name,
+                            Paged = true,
+                            PageSize = 1
+                        });
+                    _sharedConnection.OrderClassEntityKey = orderClassResults.Items.Single().EntityKey;
+                }
             }
-
             return _sharedConnection;
         }        
 

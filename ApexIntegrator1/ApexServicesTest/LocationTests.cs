@@ -17,7 +17,7 @@ namespace ApexServicesTest
             var service = new LocationService();
             var key = await service.CreateNewLocation();
 
-            Assert.That(key, Is.GreaterThan(0));
+            Assert.That(key.EntityKey, Is.GreaterThan(0));
         }
 
         [Test]
@@ -26,13 +26,13 @@ namespace ApexServicesTest
             var service = new LocationService();
             var key = await service.CreateNewLocation();
             
-            var location = await service.GetFullServiceLocation(key);
+            var location = await service.GetFullServiceLocation(key.EntityKey);
             Assert.That(location.Identifier, Is.Not.Empty);
             Assert.That(location.Coordinate.Latitude, Is.EqualTo(0));
 
-            await service.UpdateLocationAddress(key, location.Version, "2807 LAURELWOOD CT, BALTIMORE, BALTIMORE CITY, MD, USA 21209");
+            await service.UpdateLocationAddress(key.EntityKey, location.Version, "2807 LAURELWOOD CT, BALTIMORE, BALTIMORE CITY, MD, USA 21209");
             
-            location = await service.GetFullServiceLocation(key);            
+            location = await service.GetFullServiceLocation(key.EntityKey);            
             Assert.That(location.Coordinate.Latitude, Is.Not.EqualTo(0));
         }
     }
