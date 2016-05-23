@@ -10,7 +10,7 @@ namespace ApexServices
 {
     public class OrderService
     {
-        public async Task<Order> CreateOrder(string address)
+        public async Task<Order> CreateOrderAsync(string address)
         {
             var locationSvc = new LocationService();
             var locationTask = locationSvc.CreateNewLocation(address);
