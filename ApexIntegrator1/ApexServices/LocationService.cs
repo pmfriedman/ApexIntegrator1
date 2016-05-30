@@ -9,7 +9,7 @@ namespace ApexServices
 {
     public class LocationService
     {
-        public async Task<ServiceLocation> CreateNewLocation(string addressText = null)
+        public async Task<LocationInfo> CreateNewLocation(string addressText = null)
         {
             var connection = await Connection.GetConnectionAsync();
             var defaults = await DefaultEntities.GetDefaultsAsync();
@@ -18,8 +18,9 @@ namespace ApexServices
 
             if (addressText != null)
             {
-                var geocode = (await new GeocodeService().GeocodeAsync(addressText)).ResultsData[0];
-                coordinate = geocode.Location;
+                var geocode = (await new GeocodeService().GeocodeAsync(addressText)).FirstOrDefault();
+                coordinate = geocode?.Coordinate;
+                addressText = geocode.Description;
             }
 
             var location = new ServiceLocation()
@@ -60,12 +61,17 @@ namespace ApexServices
 
             var retVal = result.SaveResult[0].Object as ServiceLocation;
 
-            return retVal;
+            return new LocationInfo
+            {
+                EntityKey = retVal.EntityKey,
+                Identifier = retVal.Identifier,
+                AddressDescription = addressText
+            };
         }
 
         public async Task<long> UpdateLocationAddress(long locationEntityKey, long version, string addressText)
         {
-            var geocode = (await new GeocodeService().GeocodeAsync(addressText)).ResultsData[0];
+            var geocode = (await new GeocodeService().GeocodeAsync(addressText)).FirstOrDefault();
 
             var location = new ServiceLocation()
             {
@@ -75,8 +81,8 @@ namespace ApexServices
                 Description = geocode.Description,
                 Coordinate = new Coordinate
                 {
-                    Latitude = geocode.Location.Latitude,
-                    Longitude = geocode.Location.Longitude
+                    Latitude = geocode.Coordinate.Latitude,
+                    Longitude = geocode.Coordinate.Longitude
                 }
             };
 

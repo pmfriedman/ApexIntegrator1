@@ -10,7 +10,7 @@ namespace ApexServices
 {
     public class OrderService
     {
-        public async Task<Order> CreateOrderAsync(string address)
+        public async Task<OrderInfo> CreateOrderAsync(string address)
         {
             var locationSvc = new LocationService();
             var locationTask = locationSvc.CreateNewLocation(address);
@@ -57,7 +57,11 @@ namespace ApexServices
 
             var savedOrder = result.SaveOrdersResult[0].Object as Order;
 
-            return savedOrder;
+            return new OrderInfo
+            {
+                EntityKey = savedOrder.EntityKey,
+                Location = locationTask.Result
+            };
         }
     }
 }

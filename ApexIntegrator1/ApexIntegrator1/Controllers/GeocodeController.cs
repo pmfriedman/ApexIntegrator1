@@ -26,15 +26,13 @@ namespace ApexIntegrator1.Controllers
                 var service = new GeocodeService();
                 var geocode = await service.GeocodeAsync(text);
 
-                var result = geocode?.ResultsData?[0]?.Description;
-                if (result == null)
-                    result = string.Empty;
-
+                var result = geocode.Select(g => g.Description).ToList();
+                
                 return Json(result);
             }
             catch
             {
-                return Json(string.Empty);
+                return Json(new List<string>());
             }
         }
     }

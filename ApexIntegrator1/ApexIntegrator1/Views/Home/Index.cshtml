@@ -6,7 +6,7 @@
     <form class="form-inline">
         <div class="form-group">
             <label for="txtNewAddress">Address</label>
-            <input type="text" class="form-control" id="txtNewAddress" placeholder="Type Address">
+            <input type="text" class="form-control" id="txtNewAddress" placeholder="Type Address" value="2807 Laurelwood Ct, Baltimore">
         </div>        
         <button type="submit" class="btn btn-default" id="btnCreateOrder">Create Order</button>
     </form>
@@ -17,18 +17,32 @@
 
 
 <script src="~/Scripts/jquery-1.10.2.js"></script>
-<script src="~/Scripts/rx.all.js"></script>
+<script src="~/Scripts/jquery-ui-1.11.4.js"></script>
+<!--<script src="~/Scripts/rx.all.js"></script>-->
 <script>
 
     var orderIx = 1;
 
     $(document).ready(function () {
+
+        $('#txtNewAddress').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    type: "Post",
+                    url: "/Geocode/DoGeocode",
+                    data: { text: request.term }
+                }).promise()
+                .then(function(data) {
+                    response(data);
+                    console.log(data);
+                });
+            },
+            minLength: 3
+        });
                 
         $('#btnCreateOrder').click(function () {
             var address = $('#txtNewAddress').val();
             if (address) {
-                console.log(address);
-
                 $('#txtNewAddress').val('');
 
                 $.ajax({

@@ -21,12 +21,8 @@ namespace ApexIntegrator1.Controllers
         {
             var svc = new OrderService();
             var order = await svc.CreateOrderAsync(address);
-
-            var id = order.Identifier;
-            return Json(new
-            {
-                id = id
-            });
+            
+            return Json(order);
         }
     }
 }

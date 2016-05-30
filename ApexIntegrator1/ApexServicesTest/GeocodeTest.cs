@@ -19,7 +19,7 @@ namespace ApexServicesTest
             var result = await service.GeocodeAsync("2807 LAURELWOOD CT, BALTIMORE, BALTIMORE CITY, MD, USA 21209");
 
             Assert.That(
-                result.ResultsData.Single().Description, 
+                result.First().Description, 
                 Is.EqualTo("2807 LAURELWOOD CT, BALTIMORE, BALTIMORE CITY, MD, USA 21209"));
         }
     }

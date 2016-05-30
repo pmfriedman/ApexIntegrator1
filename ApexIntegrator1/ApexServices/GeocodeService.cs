@@ -4,13 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ApexServices.Apex;
+using System.Text.RegularExpressions;
 
 namespace ApexServices
 {
     public class GeocodeService
     {
-        public async Task<MapLocalSearchResult> GeocodeAsync(string text)
+        public async Task<List<GeocodeInfo>> GeocodeAsync(string text)
         {
+            var zipCode = Regex.Match(text, @"\s*\d+$").Value;
+            if (zipCode == string.Empty)
+                text += ", 21209";
             var connection = await Connection.GetConnectionAsync();
             var result = await connection.Mapping.PerformSearchAsync(
                 connection.Session,
@@ -27,10 +31,20 @@ namespace ApexServices
                 new MapLocalSearchOptions
                 {
                     PropertyInclusionMode = PropertyInclusionMode.AllWithoutChildren,
-                    
+                    MaxNumberResultsPerSearch = 5
                 });
 
-            return result.PerformSearchResult;
+            var list =
+                result.PerformSearchResult.ResultsData
+                .Select(r => new GeocodeInfo
+                {
+                    Coordinate = r.Location,
+                    Description = r.Description
+                })
+                .ToList();
+
+
+            return list;
         }
     }
 }
