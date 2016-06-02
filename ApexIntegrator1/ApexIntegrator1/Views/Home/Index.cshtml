@@ -37,7 +37,18 @@
                     console.log(data);
                 });
             },
-            minLength: 3
+            change: function (event, ui) {
+                if (ui.item == null || ui.item == undefined) {
+                    //$("#txtNewAddress").val("");
+                    //$("#txtNewAddress").attr("disabled", false);
+                    $("#btnCreateOrder").attr("disabled", false);
+                } else {
+                    //$("#txtNewAddress").attr("disabled", true);
+                    $("#btnCreateOrder").attr("disabled", true);
+                }
+            },
+            minLength: 3,
+            delay: 500
         });
                 
         $('#btnCreateOrder').click(function () {

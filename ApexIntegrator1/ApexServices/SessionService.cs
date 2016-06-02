@@ -98,6 +98,6 @@ namespace ApexServices
             return session;
         }
 
-        private static string SESSION_DESCRIPTION = "This and That";
+        private static string SESSION_DESCRIPTION = "ApexIntegrator1";
     }
 }

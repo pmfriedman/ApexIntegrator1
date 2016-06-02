@@ -22,11 +22,17 @@ namespace ApexServices
                 coordinate = geocode?.Coordinate;
                 addressText = geocode.Description;
             }
+            else
+            {
+                addressText = string.Empty;
+            }
+            
 
             var location = new ServiceLocation()
             {
                 Action = ActionType.Add,
                 Identifier = DateTime.Now.Ticks.ToString(),
+                Description = addressText,
                 StandingDeliveryQuantities = new Quantities(),
                 StandingPickupQuantities = new Quantities(),
                 TimeWindowTypeEntityKey = defaults.TimeWindowTypeEntityKey,

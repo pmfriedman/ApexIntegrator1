@@ -63,5 +63,37 @@ namespace ApexServices
                 Location = locationTask.Result
             };
         }
+
+        public async Task<List<OrderInfo>> GetOrders()
+        {
+            var session = await new SessionService().GetOrCreateSessionAsync();
+
+            var connection = await Connection.GetConnectionAsync();
+
+            var ordersResult = await connection.Query.RetrieveAsync(
+                connection.Session,
+                connection.RegionContext,
+                new RetrievalOptions
+                {
+                    Expression = new EqualToExpression
+                    {
+                        Left = new PropertyExpression { Name = "SessionEntityKey" },
+                        Right = new ValueExpression { Value = session.EntityKey }
+                    },
+                    Type = typeof(Order).Name,
+                    PropertyInclusionMode = PropertyInclusionMode.AllWithoutChildren
+                });
+
+            var orders = ordersResult.RetrieveResult.Items.OfType<Order>();
+
+            var orderInfos = orders.Select(o =>
+                new OrderInfo
+                {
+                    EntityKey = o.EntityKey,                    
+                });
+
+            return orderInfos.ToList();
+
+        }
     }
 }

@@ -19,10 +19,17 @@ namespace ApexIntegrator1.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateOrder(string address)
         {
+            await new SessionService().DeleteCurrentSession();
+
             var svc = new OrderService();
             var order = await svc.CreateOrderAsync(address);
             
             return Json(order);
         }
+
+        //public async Task<List<OrderInfo>> GetOrders()
+        //{
+
+        //}
     }
 }

@@ -162,7 +162,12 @@ namespace ApexServices
                 }
             }
             return _sharedConnection;
-        }        
+        }   
+        
+        public static void Reset()
+        {
+            _sharedConnection = null;
+        }     
 
     }
 }
