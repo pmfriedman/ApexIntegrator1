@@ -85,13 +85,16 @@ namespace ApexServices
             var moveResult = await connection.Routing.MoveOrdersToBestPositionAsync(
                 connection.Session,
                 connection.RegionContext,
-                new DomainInstance[] { new DomainInstance { EntityKey = savedOrder.EntityKey } },
-                new AutomaticPlacement {
+                new DomainInstance[] { new DomainInstance { EntityKey = savedOrder.EntityKey, Version = savedOrder.Version } },
+                new OnRouteAutomaticPlacement {
                     AutomaticPlacementGoal_Goal = AutomaticPlacement.AutomaticPlacementGoal.Cost.ToString(),
-                    ShouldForcePlacement = true,
-                    RouteInstance = new DomainInstance { EntityKey = routeResult.RetrieveResult.Items[0].EntityKey }
+                    ShouldForcePlacement = true,                    
+                    RouteInstance = new DomainInstance { EntityKey = routeResult.RetrieveResult.Items[0].EntityKey, Version = (routeResult.RetrieveResult.Items[0] as Route).Version }
                 },
-                new RouteRetrievalOptions[] { new RouteRetrievalOptions { EntityKey = routeResult.RetrieveResult.Items[0].EntityKey, InclusionMode = PropertyInclusionMode.None } }
+                null
+                //new RouteRetrievalOptions[] {
+                //    //new RouteRetrievalOptions { EntityKey = routeResult.RetrieveResult.Items[0].EntityKey, InclusionMode = PropertyInclusionMode.None }
+                //}
                 );
                 
 
