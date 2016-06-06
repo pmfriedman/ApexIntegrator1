@@ -93,6 +93,64 @@ namespace ApexServices
                     });
 
                 session = saveResponse.SaveResult[0].Object as DailyRoutingSession;
+
+                var passResult = await connection.Query.RetrieveAsync(
+                    connection.Session,
+                    connection.RegionContext,
+                    new RetrievalOptions
+                    {
+
+                        Expression = new AndExpression
+                        {
+                            Expressions = new SimpleExpressionBase[]
+                            {
+                                new EqualToExpression
+                                {
+                                    Left = new PropertyExpression { Name = "PassTemplateEntityKey" },
+                                    Right = new ValueExpression { Value = 101 }
+                                },
+                                new EqualToExpression
+                                {
+                                    Left = new PropertyExpression { Name = "SessionEntityKey" },
+                                    Right = new ValueExpression { Value = session.EntityKey }
+                                }
+                            }
+                        },
+                        Type = typeof(DailyPass).Name,
+                        PropertyInclusionMode = PropertyInclusionMode.None,
+                           
+
+                    });
+                
+
+
+
+                var routeSaveResponse = await connection.Routing.CreateRouteAsync(
+                    connection.Session,
+                    connection.RegionContext,
+                    new SaveRouteArgs
+                    {
+                        Identifier = Connection.UNASSIGNED_ROUTE_IDENTIFIER,
+                        Description = Connection.UNASSIGNED_ROUTE_IDENTIFIER,
+                        PreferredRuntime = TimeSpan.FromHours(8),
+                        MaximumRuntime = TimeSpan.FromHours(12),
+                        Phase = RoutePhase.Plan,
+                        OriginDepotEntityKey = 101,
+                        DestinationEntityKey = 101,
+                        OriginLoadAction = LoadAction.AsNeeded,
+                        Color = new Color() { Red = 255 },
+                        RouterEntityKey = 304,
+                        DispatcherEntityKey = 304,  
+                        PassEntityKey = passResult.RetrieveResult.Items[0].EntityKey,
+                        StartTime = DateTime.Now,
+                        Equipment = new RouteEquipmentBase[] 
+                        {
+                            new RouteEquipmentType
+                            {
+                                EquipmentTypeEntityKey = 101
+                            }
+                        }
+                    });
             }
 
             return session;

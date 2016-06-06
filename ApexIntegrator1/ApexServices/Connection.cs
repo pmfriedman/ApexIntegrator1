@@ -167,7 +167,9 @@ namespace ApexServices
         public static void Reset()
         {
             _sharedConnection = null;
-        }     
+        }
+
+        public static readonly string UNASSIGNED_ROUTE_IDENTIFIER = "UNASSIGNED";     
 
     }
 }

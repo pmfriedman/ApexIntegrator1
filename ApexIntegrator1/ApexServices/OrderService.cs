@@ -44,6 +44,31 @@ namespace ApexServices
                 OrderClassEntityKey = connection.OrderClassEntityKey,
             };
 
+            var routeResult = await connection.Query.RetrieveAsync(
+                connection.Session,
+                connection.RegionContext,
+                new RetrievalOptions
+                {
+                    Type = typeof(Route).Name,
+                    Expression = new AndExpression
+                    {
+                        Expressions = new[]
+                        {
+                            new EqualToExpression
+                            {
+                                Left = new PropertyExpression { Name = "Identifier" },
+                                Right = new ValueExpression { Value = Connection.UNASSIGNED_ROUTE_IDENTIFIER }
+                            },
+                            new EqualToExpression
+                            {
+                                Left = new PropertyExpression { Name = "RoutingSessionEntityKey" },
+                                Right = new ValueExpression { Value = sessionTask.Result.EntityKey }
+                            }
+                        }
+                    },
+                    PropertyInclusionMode = PropertyInclusionMode.None
+                });
+
             var result = await connection.Routing.SaveOrdersAsync(
                 connection.Session,
                 connection.RegionContext,
@@ -56,6 +81,19 @@ namespace ApexServices
                 });
 
             var savedOrder = result.SaveOrdersResult[0].Object as Order;
+
+            var moveResult = await connection.Routing.MoveOrdersToBestPositionAsync(
+                connection.Session,
+                connection.RegionContext,
+                new DomainInstance[] { new DomainInstance { EntityKey = savedOrder.EntityKey } },
+                new AutomaticPlacement {
+                    AutomaticPlacementGoal_Goal = AutomaticPlacement.AutomaticPlacementGoal.Cost.ToString(),
+                    ShouldForcePlacement = true,
+                    RouteInstance = new DomainInstance { EntityKey = routeResult.RetrieveResult.Items[0].EntityKey }
+                },
+                new RouteRetrievalOptions[] { new RouteRetrievalOptions { EntityKey = routeResult.RetrieveResult.Items[0].EntityKey, InclusionMode = PropertyInclusionMode.None } }
+                );
+                
 
             return new OrderInfo
             {
