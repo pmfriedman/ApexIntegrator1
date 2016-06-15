@@ -3,12 +3,64 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
 using ApexServices.Apex;
 
 namespace ApexServices
 {
     public class SessionService
     {
+        public async Task<List<DailyRoutingSession>> GetSessionsForDate(DateTime date)
+        {
+            var connection = await Connection.GetConnectionAsync();
+            var queryResult = await connection.Query.RetrieveAsync(
+                connection.Session,
+                connection.RegionContext,
+                new RetrievalOptions
+                {
+                    Expression = new EqualToExpression
+                    {
+                        Left = new PropertyExpression { Name = "StartDate" },
+                        Right = new ValueExpression { Value = date }
+                    },
+                    Type = typeof(DailyRoutingSession).Name,
+                    PropertyInclusionMode = PropertyInclusionMode.AllWithoutChildren,
+                });
+
+            var sessions = queryResult.RetrieveResult.Items.OfType<DailyRoutingSession>();
+
+            return sessions.ToList();
+        }
+
+        public async Task<long> CreateModelingSessionForSession(long sessionEntityKey)
+        {
+            var connection = await Connection.GetConnectionAsync();
+
+            var jobResult = await connection.Routing.SaveSessionAsAsync(
+                connection.Session,
+                connection.RegionContext,
+                new SaveSessionAsJobParameters
+                {
+                    ActiveRoutes = true,
+                    ArchivedRoutes = true,
+                    BuiltRoutes = true,
+                    DispatchedRoutes = true,
+                    RoutingSessionMode = SessionMode.Modeling,
+                    RoutingSessionStartDate = DateTime.Today.ToApexDate(),
+                    UnassignAllOrders = false,
+                    UnassignedOrders = true,
+                    RoutingSessionEntityKey = sessionEntityKey,
+                    RoutingSessionDescription = DateTime.Now.ToLongTimeString(),
+                    RoutingSessionBusinessWeek = DayOfWeekFlags.All,
+                    RoutingSessionHasBusinessWeekOverride = false,
+                    RoutingSessionNumberOfTimeUnits = 1                 
+                });
+
+            var jobId = jobResult.SaveSessionAsResult;
+
+            return jobId;
+        }
+
         public async System.Threading.Tasks.Task DeleteCurrentSession()
         {
             RoutingSession currrentSession = await GetCurrentSessionIfExistsAsync();
@@ -45,10 +97,21 @@ namespace ApexServices
                 connection.RegionContext,
                 new RetrievalOptions
                 {
-                    Expression = new EqualToExpression
+                    Expression = new AndExpression
                     {
-                        Left = new PropertyExpression { Name = "StartDate" },
-                        Right = new ValueExpression { Value = DateTime.Today }
+                        Expressions = new SimpleExpressionBase[]
+                        {
+                            new EqualToExpression
+                            {
+                                Left = new PropertyExpression { Name = "StartDate" },
+                                Right = new ValueExpression { Value = DateTime.Today }
+                            },
+                            new EqualToExpression
+                            {
+                                Left = new PropertyExpression { Name = "Description" },
+                                Right = new ValueExpression { Value = SESSION_DESCRIPTION }
+                            }
+                        }
                     },
                     Type = typeof(DailyRoutingSession).Name,
                     Paged = true,

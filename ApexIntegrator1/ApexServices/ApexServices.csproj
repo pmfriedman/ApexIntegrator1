@@ -46,6 +46,7 @@
     <Compile Include="DefaultEntities.cs" />
     <Compile Include="GeocodeInfo.cs" />
     <Compile Include="GeocodeService.cs" />
+    <Compile Include="JobService.cs" />
     <Compile Include="LocationInfo.cs" />
     <Compile Include="LocationService.cs" />
     <Compile Include="LoginService.cs" />
@@ -165,6 +166,9 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.ClientApplicationVersion.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.ClientDiagnosticsInformation.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.CloseStrategicRoutingSessionResponse.datasource">
@@ -305,7 +309,13 @@
     <None Include="Service References\Apex\ApexServices.Apex.GeocodeResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\Apex\ApexServices.Apex.GetMergedClientLogFileResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\Apex\ApexServices.Apex.GetUserKpiExportsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.GetZippedClientLogFilesResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.HosRuleSet.datasource">
@@ -407,6 +417,12 @@
     <None Include="Service References\Apex\ApexServices.Apex.MoveStopsToBestPositionResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\Apex\ApexServices.Apex.MoveStopTemplatesAndLocationsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.MoveStopTemplatesAndLocationsToBestPositionResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\Apex\ApexServices.Apex.MoveStopTemplatesResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -462,6 +478,15 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.PopulateArcsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.PrepareForNextDayResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.ProcessCommunityEditRequestResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.ProcessCommunityEditRequestResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.ProcessMobileDeviceActionsResponse.datasource">
@@ -533,6 +558,9 @@
     <None Include="Service References\Apex\ApexServices.Apex.RetrieveClientApplicationVersionsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\Apex\ApexServices.Apex.RetrieveClientLogListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\Apex\ApexServices.Apex.RetrieveCountriesResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -549,6 +577,12 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.RetrieveDiscussionsByEntityResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.RetrieveEditOperationsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.RetrieveEditOperationsResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.RetrieveGeocodeCandidatesResponse.datasource">
@@ -716,6 +750,9 @@
     <None Include="Service References\Apex\ApexServices.Apex.SaveTerritoryResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\Apex\ApexServices.Apex.SaveWorkerLogEventsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\Apex\ApexServices.Apex.ScorecardTemplateCriteriaInfo.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -741,6 +778,9 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.SendTextMessageToDriverResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.SendTextMessageToDriversResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.SequenceRangeResponse.datasource">
@@ -774,6 +814,9 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.StartGeocodeJobResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.StartGeocodeLocationsJobResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.SuggestLayoverResult.datasource">
@@ -837,6 +880,9 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.UnlockOrdersForStopsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.UpdateActivePassResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.UpdateArcsResponse.datasource">
@@ -903,6 +949,9 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.UpdateTravelPolygonResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Apex\ApexServices.Apex.UploadDiagnosticsInformationResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Apex\ApexServices.Apex.UrlSet.datasource">
